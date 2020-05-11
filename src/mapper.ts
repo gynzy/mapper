@@ -143,7 +143,7 @@ export class Mapper {
         // 2. Find the correct mapping configuration for combination of source and destination type
         const sourceType = Object.getPrototypeOf(source).constructor;
         const configuration = Mapper.configurations.find(
-            (x) => x.sourceType === sourceType && x.destinationType === destinationType,
+            (config) => config.sourceType === sourceType && config.destinationType === destinationType,
         )?.builder?.configuration;
 
         if (!configuration) {
@@ -179,7 +179,7 @@ export class Mapper {
         destinationType: ClassType<TDestination>,
     ): MappingBuilder<TSource, TDestination> {
         const configuration = Mapper.configurations.find(
-            (x) => x.sourceType === sourceType && x.destinationType === destinationType,
+            (config) => config.sourceType === sourceType && config.destinationType === destinationType,
         )?.builder?.configuration;
 
         if (configuration) {
