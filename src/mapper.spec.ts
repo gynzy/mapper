@@ -22,6 +22,11 @@ describe(`${Mapper.name} no custom configuration`, () => {
         expect(() => Mapper.map(new User('John', 'Denver', 'john@email.com'), Person)).toThrow();
     });
 
+    it('should copy fields for anonymous source objects', () => {
+        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com'}, Person);
+        expect(result).toEqual(new Person('John', 'Denver'));
+    });
+
     it('should copy only fields of destination model to destination object (i.e. ignore additional source fields)', () => {
         // First create mapping
         Mapper.createMap(User, Person);

@@ -142,13 +142,15 @@ export class Mapper {
 
         // 2. Find the correct mapping configuration for combination of source and destination type
         const sourceType = Object.getPrototypeOf(source).constructor;
+        const sourceTypeIsAnonymous = Object.getPrototypeOf(source) === Object.getPrototypeOf({});
+
         const configuration = Mapper.configurations.find(
             (config) => config.sourceType === sourceType && config.destinationType === destinationType,
         )?.builder?.configuration;
 
-        if (!configuration) {
+        if (!configuration && !sourceTypeIsAnonymous) {
             throw new Error(
-                `Mapping missing for ${sourceType} -> ${destinationType}. Create with Mapper.createMap(...)`,
+                `Mapping missing for ${sourceType} -> ${destinationType} but required unless sourceType is anonymous. Create with Mapper.createMap(...)`,
             );
         }
 
@@ -206,12 +208,12 @@ export class Mapper {
         configuration: MappingConfiguration<TSource, TDestination>,
     ): void {
         // Don't modify properties which are ignored
-        if (configuration.ignoredFields.has(key)) {
+        if (configuration?.ignoredFields.has(key)) {
             return;
         }
 
         // Get the new value using factory or otherwise default copy
-        const factory = configuration.factoryFields.get(key);
+        const factory = configuration?.factoryFields.get(key);
         destination[key] = factory ? factory(source, destination) : source[key];
     }
 }
