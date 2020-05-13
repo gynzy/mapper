@@ -7,14 +7,14 @@ describe(`${Mapper.name} no custom configuration`, () => {
         constructor(
             public readonly firstName: string,
             public readonly lastName: string,
-            private readonly email: string
+            private readonly email: string,
         ) { }
     }
 
     class Person {
         constructor(
             public readonly firstName: string,
-            public readonly lastName: string
+            public readonly lastName: string,
         ) { }
     }
 
@@ -23,7 +23,7 @@ describe(`${Mapper.name} no custom configuration`, () => {
     });
 
     it('should copy fields for anonymous source objects', () => {
-        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com'}, Person);
+        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com' }, Person);
         expect(result).toEqual(new Person('John', 'Denver'));
     });
 
@@ -73,7 +73,7 @@ describe(`${Mapper.name} with custom configuration`, () => {
         constructor(
             public readonly id: number,
             public readonly fullName: string,
-            public readonly school: School
+            public readonly school: School,
         ) { }
     }
 
@@ -91,9 +91,11 @@ describe(`${Mapper.name} with custom configuration`, () => {
 
     beforeAll(() => {
         Mapper.createMap(UserCompleteRow, Teacher)
-            .for('school').mapFrom(src => Mapper.map(src, School))
-            .for('fullName').mapFrom(src => `${src.firstName} ${src.lastName}`)
-            .for('id').mapFrom('userId');
+            .for('school').mapFrom((src) => Mapper.map(src, School))
+            .for('fullName')
+.mapFrom((src) => `${src.firstName} ${src.lastName}`)
+            .for('id')
+.mapFrom('userId');
 
         Mapper.createMap(UserCompleteRow, School)
             .for('id').mapFrom('schoolId');
@@ -108,7 +110,7 @@ describe(`${Mapper.name} with custom configuration`, () => {
         const result = Mapper.map(rows, Teacher);
         expect(result).toEqual([
             new Teacher(1, 'Emma Watson', new School(42, 'GYNZY')),
-            new Teacher(2, 'John Denver', new School(42, 'GYNZY'))
+            new Teacher(2, 'John Denver', new School(42, 'GYNZY')),
         ]);
     });
 

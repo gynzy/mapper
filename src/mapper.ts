@@ -159,10 +159,9 @@ export class Mapper {
         }
 
         // 3. Copy all (other) fields from source to destination
-        const allProperties = Object.getOwnPropertyNames(new destinationType());
-        for (const key of allProperties) {
+        Object.getOwnPropertyNames(new destinationType()).forEach((key) => {
             Mapper.mapField(source, destination, key, configuration);
-        }
+        });
 
         // 4. Return object :)
         return destination;

@@ -3,6 +3,8 @@
 
 import { MappingConfiguration } from './mapping-configuration';
 
+export type FieldMappingFactory<TSource, TDestination> = (source: TSource, destination: TDestination) => unknown;
+
 /**
  * [INTERNAL] Describe how destination field is mapped.
  */
@@ -52,11 +54,11 @@ export class FieldMapping<TSource, TDestination> {
      * value is the to be destination object.
      */
     public mapFrom(
-        factory: (source: TSource, destination: TDestination) => unknown,
+        factory: FieldMappingFactory<TSource, TDestination>,
     ): MappingBuilder<TSource, TDestination>;
 
     public mapFrom<M extends keyof TSource>(
-        sourceOrFactory: (M & string) | ((source: TSource, destination: TDestination) => unknown),
+        sourceOrFactory: (M & string) | (FieldMappingFactory<TSource, TDestination>),
     ): MappingBuilder<TSource, TDestination> {
         // sourceMember overload is used, just call this function again with a factory.
         if (typeof sourceOrFactory === 'string') {
@@ -65,7 +67,7 @@ export class FieldMapping<TSource, TDestination> {
 
         this.builder.configuration.factoryFields.set(
             this.destinationField,
-            sourceOrFactory as (source: TSource, destination: TDestination) => unknown,
+            sourceOrFactory as FieldMappingFactory<TSource, TDestination>,
         );
         return this.builder;
     }
@@ -90,7 +92,7 @@ export class MappingBuilder<TSource, TDestination> {
      */
     public readonly configuration: MappingConfiguration<TSource, TDestination> = {
         ignoredFields: new Set<string>(),
-        factoryFields: new Map<string, (source: TSource, destination: TDestination) => unknown>(),
+        factoryFields: new Map<string, FieldMappingFactory<TSource, TDestination>>(),
     };
 
     public for<M extends keyof TDestination>(destinationField: M & string): FieldMapping<TSource, TDestination> {

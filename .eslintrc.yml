@@ -1,0 +1,23 @@
+env:
+  node: true
+  commonjs: true
+  es6: true
+
+extends:
+  - airbnb-typescript/base
+  - plugin:import/typescript
+
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: tsconfig.json
+  sourceType: module
+
+plugins:
+  - '@typescript-eslint'
+
+rules: 
+  '@typescript-eslint/indent': 'off' # We use prettier for indenting
+  'max-len':
+    - error
+    - code: 120
+      ignorePattern: import |export |`.*`|'.*'|// .*|\* .*
