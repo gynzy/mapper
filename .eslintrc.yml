@@ -13,9 +13,11 @@ parserOptions:
   sourceType: module
 
 plugins:
-  - '@typescript-eslint'
+  - '@typescript-eslint/eslint-plugin'
+  - import
+  - prettier
 
-rules: 
+rules:
   '@typescript-eslint/indent': 'off' # We use prettier for indenting
   'max-len':
     - error

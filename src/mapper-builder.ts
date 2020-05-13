@@ -53,12 +53,10 @@ export class FieldMapping<TSource, TDestination> {
      * @param factory custom factory to resolve value, first parameter is the source object, second
      * value is the to be destination object.
      */
-    public mapFrom(
-        factory: FieldMappingFactory<TSource, TDestination>,
-    ): MappingBuilder<TSource, TDestination>;
+    public mapFrom(factory: FieldMappingFactory<TSource, TDestination>): MappingBuilder<TSource, TDestination>;
 
     public mapFrom<M extends keyof TSource>(
-        sourceOrFactory: (M & string) | (FieldMappingFactory<TSource, TDestination>),
+        sourceOrFactory: (M & string) | FieldMappingFactory<TSource, TDestination>,
     ): MappingBuilder<TSource, TDestination> {
         // sourceMember overload is used, just call this function again with a factory.
         if (typeof sourceOrFactory === 'string') {

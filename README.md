@@ -1,10 +1,13 @@
 # mapper
 
+[![Build Status](https://travis-ci.org/gynzy/mapper.svg?branch=master)](https://travis-ci.org/gynzy/mapper)
+[![Coverage Status](https://coveralls.io/repos/github/gynzy/mapper/badge.svg?branch=master)](https://coveralls.io/github/gynzy/mapper?branch=master)
+
 mapper is a zero-dependency nodejs library solving one of the most tedious developer tasks - mapping an object to another type of object. Object mapping works by transforming a source object of one type to another type. Often objects have similar fields and it's tedious and error-prone to copy each individually. With mapper these fields will be copied without any configuration.
 
 ## How to use
 
-After adding the library, you first need to create a mapping between the source and destination type with `Mapper.createMap`. This method returns a `MappingBuilder` allowing  customizing the mapping (see below). Mapping objects can be done by one of the overloads of `Mapper.map`.
+After adding the library, you first need to create a mapping between the source and destination type with `Mapper.createMap`. This method returns a `MappingBuilder` allowing customizing the mapping (see below). Mapping objects can be done by one of the overloads of `Mapper.map`.
 
 _See also the tests in `mapper.spec.ts`, below a small summary is given._
 

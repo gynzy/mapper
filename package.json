@@ -3,7 +3,10 @@
     "version": "0.0.0",
     "description": "Convention based object mapper inspired by AutoMapper",
     "main": "dist/index",
-    "repository": "https://github.com/gynzy/mapper",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gynzy/mapper.git"
+    },
     "author": "Joël Luijmes",
     "license": "MIT",
     "typings": "dist/index",
@@ -21,6 +24,7 @@
         "@types/jest": "^25.2.1",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",
+        "coveralls": "^3.1.0",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-typescript": "^7.2.1",
         "eslint-plugin-import": "^2.20.2",
@@ -47,5 +51,14 @@
         },
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/gynzy/mapper/issues"
+    },
+    "homepage": "https://github.com/gynzy/mapper#readme",
+    "keywords": [
+        "mapper",
+        "typescript",
+        "object-mapping"
+    ]
 }
