@@ -1,9 +1,13 @@
 /* eslint-disable new-cap */
 /* eslint-disable no-param-reassign */
 
-import { ClassType } from '@gynzy/utils';
 import { MappingConfiguration } from './mapping-configuration';
 import { MappingBuilder } from './mapper-builder';
+
+/**
+ * Type of model to be used as parameter.
+ */
+export type ClassType<T> = new (...args: unknown[]) => T;
 
 /**
  * Mapper can be used to automatically map one object to another object. It is inspired by the most

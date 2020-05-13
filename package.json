@@ -1,0 +1,40 @@
+{
+    "name": "@gynzy/mapper",
+    "version": "0.0.0",
+    "description": "Convention based object mapper inspired by AutoMapper",
+    "main": "dist/index",
+    "repository": "https://github.com/gynzy/mapper",
+    "author": "Joël Luijmes",
+    "license": "MIT",
+    "typings": "dist/index",
+    "scripts": {
+        "build": "tsc -p tsconfig.json -d true",
+        "lint": "tsc --noEmit && eslint '{lib,test}/*/**/*.{js,ts}'",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:cov": "jest --coverage",
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "test:e2e": "jest --config ./test/jest-e2e.json --forceExit"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/jest": "^25.2.1",
+        "jest": "^25.5.1",
+        "ts-jest": "^25.5.1",
+        "typescript": "^3.9.2"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "js",
+            "ts",
+            "json"
+        ],
+        "rootDir": "src",
+        "testRegex": ".spec.ts$",
+        "transform": {
+            "^.+\\.(t|j)s$": "ts-jest"
+        },
+        "coverageDirectory": "../coverage",
+        "testEnvironment": "node"
+    }
+}
