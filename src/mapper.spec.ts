@@ -92,10 +92,8 @@ describe(`${Mapper.name} with custom configuration`, () => {
     beforeAll(() => {
         Mapper.createMap(UserCompleteRow, Teacher)
             .for('school').mapFrom((src) => Mapper.map(src, School))
-            .for('fullName')
-.mapFrom((src) => `${src.firstName} ${src.lastName}`)
-            .for('id')
-.mapFrom('userId');
+            .for('fullName').mapFrom((src) => `${src.firstName} ${src.lastName}`)
+            .for('id').mapFrom('userId');
 
         Mapper.createMap(UserCompleteRow, School)
             .for('id').mapFrom('schoolId');
