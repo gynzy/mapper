@@ -19,7 +19,14 @@ plugins:
 
 rules:
   '@typescript-eslint/indent': 'off' # We use prettier for indenting
+  'import/prefer-default-export': 'off'
+  'newline-per-chained-call': 'off'
   'max-len':
     - error
     - code: 120
       ignorePattern: import |export |`.*`|'.*'|// .*|\* .*
+
+overrides:
+  - files: ["*spec.ts"]
+    rules:
+      'max-classes-per-file': "off"
