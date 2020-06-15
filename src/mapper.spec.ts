@@ -2,6 +2,13 @@
 
 import { Mapper } from './mapper';
 
+class Person {
+    constructor(
+        public readonly firstName: string,
+        public readonly lastName: string,
+    ) { }
+}
+
 describe(`${Mapper.name} no custom configuration`, () => {
     class User {
         constructor(
@@ -11,20 +18,13 @@ describe(`${Mapper.name} no custom configuration`, () => {
         ) { }
     }
 
-    class Person {
-        constructor(
-            public readonly firstName: string,
-            public readonly lastName: string,
-        ) { }
-    }
+    it('should map plain object', () => {
+        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com' }, Person);
+        expect(result).toEqual(new Person('John', 'Denver'));
+    });
 
     it('throws when mapping is not created yet', () => {
         expect(() => Mapper.map(new User('John', 'Denver', 'john@email.com'), Person)).toThrow();
-    });
-
-    it('should copy fields for anonymous source objects', () => {
-        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com' }, Person);
-        expect(result).toEqual(new Person('John', 'Denver'));
     });
 
     it('should copy only fields of destination model to destination object (i.e. ignore additional source fields)', () => {
@@ -115,4 +115,24 @@ describe(`${Mapper.name} with custom configuration`, () => {
     it('throws when configuration already exists between mapping types', () => {
         expect(() => Mapper.createMap(UserCompleteRow, Teacher)).toThrow();
     });
+});
+
+describe(`${Mapper.name} with custom resolver`, () => {
+
+    it('should create object from string with custom construct', () => {
+        Mapper.createMap(String, Person).construct((name: string) => new Person(name, 'Denver'));
+
+        const result = Mapper.map('John', Person);
+        expect(result).toEqual(new Person('John', 'Denver'));
+    })
+
+
+    // it('should map json object', () => {
+    //     const json = JSON.stringify({ firstName: 'John', lastName: 'Denver', email: 'john@email.com' });
+
+    //     Mapper.createMap(Person).fromJson();
+
+    //     const result = Mapper.map(json, Person);
+    //     expect(result).toEqual(new Person('John', 'Denver'));
+    // });
 });

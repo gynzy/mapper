@@ -2,12 +2,8 @@
 /* eslint-disable no-param-reassign */
 
 import { MappingConfiguration } from './mapping-configuration';
-import { MappingBuilder } from './mapper-builder';
-
-/**
- * Type of model to be used as parameter.
- */
-export type ClassType<T> = new (...args: unknown[]) => T;
+import { MappingBuilder, MappingBuilderSingle } from './mapper-builder';
+import { ClassType } from './class-type';
 
 /**
  * Mapper can be used to automatically map one object to another object. It is inspired by the most
@@ -158,6 +154,9 @@ export class Mapper {
             );
         }
 
+        // 3. Check if custom factory exists to construct destination object
+        configuration
+
         // 3. Copy all (other) fields from source to destination
         Object.getOwnPropertyNames(new destinationType()).forEach((key) => {
             Mapper.mapField(source, destination, key, configuration);
@@ -166,6 +165,13 @@ export class Mapper {
         // 4. Return object :)
         return destination;
     }
+
+    public static createMap<T>(sourceType: ClassType<T>): MappingBuilderSingle<T>;
+
+    public static createMap<TSource, TDestination>(
+        sourceType: ClassType<TSource>,
+        destinationType: ClassType<TDestination>,
+    ): MappingBuilder<TSource, TDestination>;
 
     /**
      * Creates a custom mapping between types from `sourceType` to  `destinationType`. Use fluent
@@ -181,8 +187,8 @@ export class Mapper {
      */
     public static createMap<TSource, TDestination>(
         sourceType: ClassType<TSource>,
-        destinationType: ClassType<TDestination>,
-    ): MappingBuilder<TSource, TDestination> {
+        destinationType?: ClassType<TDestination>,
+    ): MappingBuilder<TSource, TDestination> | MappingBuilderSingle<TSource> {
         const configuration = Mapper.configurations.find(
             (config) => config.sourceType === sourceType && config.destinationType === destinationType,
         )?.builder?.configuration;
@@ -191,7 +197,7 @@ export class Mapper {
             throw new Error(`Configuration already exists for mapping ${sourceType} -> ${destinationType}`);
         }
 
-        const builder = new MappingBuilder<TSource, TDestination>();
+        const builder = new MappingBuilder<TSource, TDestination>(sourceType, destinationType);
         Mapper.configurations.push({ sourceType, destinationType, builder });
 
         return builder;

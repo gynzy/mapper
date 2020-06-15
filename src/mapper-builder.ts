@@ -2,7 +2,10 @@
 /* eslint-disable max-classes-per-file */
 
 import { MappingConfiguration } from './mapping-configuration';
+import { Mapper } from './mapper';
+import { ClassType } from './class-type';
 
+export type Factory<TSource, TDestination> = (source: TSource) => TDestination;
 export type FieldMappingFactory<TSource, TDestination> = (source: TSource, destination: TDestination) => unknown;
 
 /**
@@ -12,7 +15,7 @@ export class FieldMapping<TSource, TDestination> {
     constructor(
         private readonly builder: MappingBuilder<TSource, TDestination>,
         private readonly destinationField: string,
-    ) {}
+    ) { }
 
     /**
      * Ignores `destinationMember` from mapping. If destination object is instantiated, the
@@ -83,7 +86,13 @@ export class FieldMapping<TSource, TDestination> {
  * [INTERNAL] Construct mapping for a destination field.
  */
 export class MappingBuilder<TSource, TDestination> {
-    private readonly mappings = new Map<string, FieldMapping<TSource, TDestination>>();
+    private readonly constructMappings = new Set<ClassType<TDestination>>();
+    private readonly fieldMappings = new Map<string, FieldMapping<TSource, TDestination>>();
+
+    constructor(
+        private readonly sourceType: ClassType<TSource>,
+        private readonly destinationType?: ClassType<TDestination>
+    ) { }
 
     /**
      * Holds custom mapping configuration, only for internal usage.
@@ -94,13 +103,37 @@ export class MappingBuilder<TSource, TDestination> {
     };
 
     public for<M extends keyof TDestination>(destinationField: M & string): FieldMapping<TSource, TDestination> {
-        if (this.mappings.has(destinationField)) {
+        if (this.fieldMappings.has(destinationField)) {
             throw new Error(`Mapping already configured for field '${destinationField}'`);
         }
 
         const mapping = new FieldMapping(this, destinationField);
-        this.mappings.set(destinationField, mapping);
+        this.fieldMappings.set(destinationField, mapping);
 
         return mapping;
+    }
+
+    public construct(factory: Factory<TSource, TDestination>): MappingBuilder<TSource, TDestination> {
+        if (this.constructMappings.has(this.destinationType)) {
+            throw new Error(`Mapping already configured for field '${this.destinationType}'`);
+        }
+
+        this.constructMappings.add(this.destinationType);
+        return this;
+    }
+}
+
+export enum JsonCasing {
+    CAMEL_CASE = 'CAMEL_CASE',
+    SNAKE_CASE = 'SNAKE_CASE',
+}
+
+export class MappingBuilderSingle<T> {
+    public fromJson(casing = JsonCasing.CAMEL_CASE): MappingBuilder<any, T> {
+        return null;
+    }
+
+    public toJson(casing = JsonCasing.CAMEL_CASE): MappingBuilder<T, any> {
+        return null;
     }
 }
