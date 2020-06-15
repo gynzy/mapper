@@ -98,6 +98,18 @@ Mapper.createMap(Record, Organization)
     .for('name').ignore();
 ```
 
+### forAll
+
+Sometimes you have many fields for which you want to have the same configuration. For instance, when updating an object with fields from another object which uses the same names.
+
+```ts
+Mapper.createMap(Record, Organization)
+    // Ignore all fields
+    .forAll().ignore()
+    // But do map id from organizationId
+    .for('id').mapFrom('organizationId');
+```
+
 ## How it works
 
 Mapping is done by listing all fields after instantiating a new instance of destination type. For each destination field, the value is resolved from the source, depending on the applied configuration. These include (see also examples above):

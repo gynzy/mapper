@@ -1,5 +1,3 @@
-/* eslint-disable max-classes-per-file */
-
 import { Mapper } from './mapper';
 
 describe(`${Mapper.name} no custom configuration`, () => {
@@ -7,14 +5,14 @@ describe(`${Mapper.name} no custom configuration`, () => {
         constructor(
             public readonly firstName: string,
             public readonly lastName: string,
-            private readonly email: string,
+            private readonly email: string
         ) { }
     }
 
     class Person {
         constructor(
             public readonly firstName: string,
-            public readonly lastName: string,
+            public readonly lastName: string
         ) { }
     }
 
@@ -23,7 +21,7 @@ describe(`${Mapper.name} no custom configuration`, () => {
     });
 
     it('should copy fields for anonymous source objects', () => {
-        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com' }, Person);
+        const result = Mapper.map({ firstName: 'John', lastName: 'Denver', email: 'john@email.com'}, Person);
         expect(result).toEqual(new Person('John', 'Denver'));
     });
 
@@ -36,11 +34,18 @@ describe(`${Mapper.name} no custom configuration`, () => {
     });
 
     it('should copy fields from source to existing destination object (i.e. original destination is modified)', () => {
-        const emma = new Person('Emma', 'Watson');
-        const result = Mapper.map(new User('John', 'Denver', 'john@email.com'), emma);
+        let emma = new Person('Emma', 'Watson');
+        let result = Mapper.map(new User('John', 'Denver', 'john@email.com'), emma);
 
         expect(result).toEqual(new Person('John', 'Denver'));
         expect(emma).toEqual(new Person('John', 'Denver'));
+
+        // Lastname is now undefined
+        emma = new Person('Emma', 'Watson');
+        result = Mapper.map(new User('John', undefined, 'john@email.com'), emma);
+
+        expect(result).toEqual(new Person('John', undefined));
+        expect(emma).toEqual(new Person('John', undefined));
     });
 
     it('should copy fields from source to existing destination object, without instantiating destination type, based on explicit type', () => {
@@ -59,7 +64,7 @@ describe(`${Mapper.name} no custom configuration`, () => {
 });
 
 describe(`${Mapper.name} with custom configuration`, () => {
-    class UserCompleteRow {
+    class UserComplete {
         constructor(
             public readonly userId: number,
             public readonly brin: string,
@@ -73,7 +78,7 @@ describe(`${Mapper.name} with custom configuration`, () => {
         constructor(
             public readonly id: number,
             public readonly fullName: string,
-            public readonly school: School,
+            public readonly school: School
         ) { }
     }
 
@@ -84,21 +89,23 @@ describe(`${Mapper.name} with custom configuration`, () => {
         ) { }
     }
 
-    const rows: UserCompleteRow[] = [
-        new UserCompleteRow(1, 'GYNZY', 'Emma', 'Watson', 42),
-        new UserCompleteRow(2, 'GYNZY', 'John', 'Denver', 42),
+    const rows: UserComplete[] = [
+        new UserComplete(1, 'GYNZY', 'Emma', 'Watson', 42),
+        new UserComplete(2, 'GYNZY', 'John', 'Denver', 42),
     ];
 
     beforeAll(() => {
-        Mapper.createMap(UserCompleteRow, Teacher)
-            .for('school').mapFrom((src) => Mapper.map(src, School))
-            .for('fullName')
-.mapFrom((src) => `${src.firstName} ${src.lastName}`)
-            .for('id')
-.mapFrom('userId');
+        Mapper.createMap(UserComplete, Teacher)
+            .for('school').mapFrom(src => Mapper.map(src, School))
+            .for('fullName').mapFrom(src => `${src.firstName} ${src.lastName}`)
+            .for('id').mapFrom('userId');
 
-        Mapper.createMap(UserCompleteRow, School)
+        Mapper.createMap(UserComplete, School)
             .for('id').mapFrom('schoolId');
+
+        Mapper.createMap(Teacher, Teacher)
+            .forAll().ignore()
+            .for('school').mapFrom('school');
     });
 
     it('should create destination object for single element', () => {
@@ -110,11 +117,22 @@ describe(`${Mapper.name} with custom configuration`, () => {
         const result = Mapper.map(rows, Teacher);
         expect(result).toEqual([
             new Teacher(1, 'Emma Watson', new School(42, 'GYNZY')),
-            new Teacher(2, 'John Denver', new School(42, 'GYNZY')),
+            new Teacher(2, 'John Denver', new School(42, 'GYNZY'))
         ]);
     });
 
     it('throws when configuration already exists between mapping types', () => {
-        expect(() => Mapper.createMap(UserCompleteRow, Teacher)).toThrow();
+        expect(() => Mapper.createMap(UserComplete, Teacher)).toThrow();
+    });
+
+    it('should enrich existing destination object', () => {
+        const school = new School(1, '123A');
+        const john = Mapper.map(
+            new Teacher(1, 'Emma Watson', school),
+            new Teacher(2, 'John Denver', new School(2, '456B'))
+        );
+
+        // Only the school field should be overwritten, other values are ignored.
+        expect(john).toEqual(new Teacher(2, 'John Denver', school));
     });
 });

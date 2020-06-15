@@ -2,6 +2,7 @@
 /* eslint-disable max-classes-per-file */
 
 import { MappingConfiguration } from './mapping-configuration';
+import { ClassType } from './class-type';
 
 export type FieldMappingFactory<TSource, TDestination> = (source: TSource, destination: TDestination) => unknown;
 
@@ -12,7 +13,7 @@ export class FieldMapping<TSource, TDestination> {
     constructor(
         private readonly builder: MappingBuilder<TSource, TDestination>,
         private readonly destinationField: string,
-    ) {}
+    ) { }
 
     /**
      * Ignores `destinationMember` from mapping. If destination object is instantiated, the
@@ -85,6 +86,11 @@ export class FieldMapping<TSource, TDestination> {
 export class MappingBuilder<TSource, TDestination> {
     private readonly mappings = new Map<string, FieldMapping<TSource, TDestination>>();
 
+    constructor(
+        private readonly sourceType: ClassType<TSource>,
+        private readonly destinationType: ClassType<TDestination>,
+    ) { }
+
     /**
      * Holds custom mapping configuration, only for internal usage.
      */
@@ -102,5 +108,10 @@ export class MappingBuilder<TSource, TDestination> {
         this.mappings.set(destinationField, mapping);
 
         return mapping;
+    }
+
+    public forAll(): FieldMapping<TSource, TDestination> {
+        // null acts as special value for fallback
+        return this.for(null as any);
     }
 }

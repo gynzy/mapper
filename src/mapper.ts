@@ -3,11 +3,7 @@
 
 import { MappingConfiguration } from './mapping-configuration';
 import { MappingBuilder } from './mapper-builder';
-
-/**
- * Type of model to be used as parameter.
- */
-export type ClassType<T> = new (...args: unknown[]) => T;
+import { ClassType } from './class-type';
 
 /**
  * Mapper can be used to automatically map one object to another object. It is inspired by the most
@@ -159,9 +155,10 @@ export class Mapper {
         }
 
         // 3. Copy all (other) fields from source to destination
-        Object.getOwnPropertyNames(new destinationType()).forEach((key) => {
+        const allProperties = Object.getOwnPropertyNames(new destinationType());
+        for (const key of allProperties) {
             Mapper.mapField(source, destination, key, configuration);
-        });
+        }
 
         // 4. Return object :)
         return destination;
@@ -191,7 +188,7 @@ export class Mapper {
             throw new Error(`Configuration already exists for mapping ${sourceType} -> ${destinationType}`);
         }
 
-        const builder = new MappingBuilder<TSource, TDestination>();
+        const builder = new MappingBuilder(sourceType, destinationType);
         Mapper.configurations.push({ sourceType, destinationType, builder });
 
         return builder;
@@ -210,13 +207,29 @@ export class Mapper {
         key: string,
         configuration: MappingConfiguration<TSource, TDestination>,
     ): void {
-        // Don't modify properties which are ignored
-        if (configuration?.ignoredFields.has(key)) {
+        // Always perform basic copy if there is no custom configuration
+        if (!configuration) {
+            destination[key] = source[key];
             return;
         }
 
-        // Get the new value using factory or otherwise default copy
-        const factory = configuration?.factoryFields.get(key);
-        destination[key] = factory ? factory(source, destination) : source[key];
+        // Don't modify properties which are explicitly ignored
+        if (configuration.ignoredFields.has(key)) {
+            return;
+        }
+
+        // Resolve value with factory, note: null is special fallback value (forAll)
+        const factory = configuration.factoryFields.get(key) ?? configuration.factoryFields.get(null);
+        if (factory) {
+            destination[key] = factory(source, destination);
+            return;
+        }
+
+        // Don't copy if we used forAll
+        if (configuration.ignoredFields.has(null)) {
+            return;
+        }
+
+        destination[key] = source[key];
     }
 }
