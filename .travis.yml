@@ -3,9 +3,9 @@ node_js:
   - node
 
 script:
+  - npm run build
   - npm run lint
   - jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
-
 
 deploy:
   edge: true
