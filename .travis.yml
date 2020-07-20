@@ -8,10 +8,11 @@ script:
   - jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
 
 deploy:
-  edge: true
   provider: npm
-  email: "me@joell.app"
+  email: me@joell.dev
   api_key:
-    secure: "LS9Miq5ttrIGIdbhGjpXSfnH6aa4Ff6/Xe0v8UWEdGAtqvjuUmhER1K6+q0xqZfYNL85JsG/1wUnhgG63QXmpWkOsFH2hMa/hPUlvD5A90WX1D2KKsP9h/gBT6cEmnRCAmusy8XcRkLkS6ODhPvHmCgqtnXmgrcI609SXEMlfkZnNtrVIotCRB2+99KfViBAPq1iFqxZJ/s0kZLFv3k0tn1sswEZGx6zbI5zyiq92nRzoWrTiOTW0JBNVdEb2ObL4Fd0UdP9koeI27jSVASDb/1g7pXYomBw0nDzY5sl0X+4WteTz9teADjRH2jnhdtw6KTfp2PomoDKZJhve3rKHE0B0VWZzqH3sYT9SCRyyaZiO+S+5OvyBbqLShiPFUkTqJROaZZz8srvPak+uE+lNLytYzEa8OoXkXvFAWFmnjI10NUgn0u8WZzSgNsx4+WbDdljfDCL9bSP85vm/DNAZdzE5WNbyEEt1JmVcLjgexl9Eu+JQ2GR9zTZXq09mVXCh9WY7jnshYweO80sYurlouixkndwHkb20Geq8YTxzACLpJmTt8lLXpdBmtUcGPzWUqC2BdeXM8OZ5uSzhn9J8FJNLH8/J+K5/UvtDFbpZNAiNO9DwxyjucgvBqstcldIHcuLsywcCaEaYiC6K17btEUynujgFRAJsljA4dHDXDs="
+    secure: uzEXFsW1tORNjBHtBrXrwK3PJR9i8agRekdAXxmT5qZgNaiGIbdelz1w5cdhZZa/FQPnw7UZDucl7KLQfKhYZCO1jtJdmUCtsykuM2o5bxWLlQs+Zve+RyKoVHmRVaTgOiCY/WkDw2eITNPWoi3PhISkvkWGYjsX4dLepzEkFWFUKNeLJ+gvWADokQcfx9HTb13FpYMFpxXcWC96yckQI9V/NDmIa+eFVNwaF5+BEckVZ2l1FjEV8VwZkVtlaBZYqlIN7GEFWA5eWCw8Xpxy4IyvqkkPFUbo9+UCLBew0p//661jVBwf+IxC46v6nGqijHvuudyUIkwmW4QPRZdTFNp0jUvTI51jmmrjJntbRHMw3TtxlGGcYYAGEKwYufU+sv2oDm6fuxES8lQPcM1mjWSCCkJU57awStIf6PzsZXjBBME4AL3OmHj25PKfgNs++jkfdKslP/3MqsyAdDo+47xA1Rycbn479IVu1iIhIxonRHa4ClxgZqn+RYHmOVohIUR3XPMX5FBwhSsc8Qhzq9Flk8uOdC02zcD2yH4rdsYNXmljeQW9rXpEQVQ3zDUsUuUjK6ZQHDKyki3Rd09M0qm6el3RI1qN9ESvS3dbY/CthO7ZVhSQY2yM+kVx6XNbynCGS46lSTc4DK/w2hfzd1n9T3xRdtH0T2bJ00oXaKk=
   on:
     tags: true
+    repo: gynzy/mapper
+  skip_cleanup: 'true'
