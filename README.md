@@ -9,11 +9,10 @@ mapper is a zero-dependency nodejs library solving one of the most tedious devel
 
 After adding the library, you first need to create a mapping between the source and destination type with `Mapper.createMap`. This method returns a `MappingBuilder` allowing customizing the mapping (see below). Mapping objects can be done by one of the overloads of `Mapper.map`.
 
-_See also the tests in `mapper.spec.ts`, below a small summary is given._
+For more samples, check out the tests `mapper.spec.ts`. Below a summary is given, full runnable
+samples can be found in the `/samples` directory (run with `ts-node samples/01-simple.ts`).
 
 ```ts
-import { Mapper } from '@gynzy/mapper';
-
 class User {
     constructor(
         public readonly firstName: string,
@@ -35,23 +34,39 @@ Mapper.createMap(User, Person);
 // Maps user to person by instantiating a new Person object.
 const sourceUser = new User('John', 'Denver', 'john@email.com');
 let person = Mapper.map(sourceUser, Person);
+console.log(person);
+// Prints:
+//  Person { firstName: 'John', lastName: 'Denver' }
 
 // Mapping to an existing object overwrites the fields.
 // The object emma itself is modified and also returned.
 const emma = new Person('Emma', 'Watson');
 person = Mapper.map(sourceUser, emma);
+console.log(person);
+// Prints:
+//  Person { firstName: 'John', lastName: 'Denver' }
 
-// Maps to existing object by explicitly specifying the typ of destination object.
+// Maps to existing object by explicitly specifying the type of destination object.
 // The type of object remains anonymous (we can't actually change the type) but it is mapped with
 // the fields Person.
 const john = { firstName: 'John' } as any;
 person = Mapper.map(sourceUser, john, Person);
+console.log(person);
+// Prints:
+//  { firstName: 'John', lastName: 'Denver' }
 
 // If source object is array, each element is mapped and an array is returned.
-let persons = Mapper.map([
+const persons = Mapper.map([
     new User('John', 'Denver', 'john@email.com'),
     new User('Emma', 'Watson', 'emma@watson.com'),
 ], Person);
+
+console.log(persons);
+// Prints:
+//  [
+//     Person { firstName: 'John', lastName: 'Denver' },
+//     Person { firstName: 'Emma', lastName: 'Watson' }
+//  ]
 ```
 
 ## Custom configuration
@@ -96,6 +111,32 @@ Mapper.createMap(Record, Organization)
     .for('id').mapFrom('organizationId')
     // name refers to User
     .for('name').ignore();
+
+const record = new Record(1, 1, 'John', 'Denver');
+
+const user = Mapper.map(record, User);
+console.log(user);
+// Prints:
+//  User {
+//    id: 1,
+//    fullName: 'John Denver',
+//    organization: Organization { id: 1, name: undefined }
+//  }
+
+const organization = Mapper.map(record, Organization);
+console.log(organization);
+// Prints:
+//  Organization { id: 1, name: undefined }
+
+const existingUser = new User(1, 'Emma Watson', null);
+Mapper.map(record, existingUser);
+console.log(existingUser);
+// Prints:
+//  User {
+//    id: 1,
+//    fullName: 'Emma Watson',
+//    organization: Organization { id: 1, name: undefined }
+//  }
 ```
 
 ### forAll
